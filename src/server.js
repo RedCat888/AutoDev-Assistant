@@ -30,6 +30,7 @@ const { PCControl } = require('./tools/pc-control');
 const { CursorAutopilot } = require('./agent/autopilot');
 const { AutomationController } = require('./agent/automationController');
 const { AutonomousLoop } = require('./agent/autonomousLoop');
+const { createPythonBridge } = require('./agent/pythonBridge');
 
 const configPath = path.resolve(process.cwd(), '.autodevrc.json');
 const config = fs.existsSync(configPath)
@@ -55,6 +56,15 @@ const llm = createLlmRouter(config);
 const taskHistory = new TaskHistoryManager();
 const modelRouter = new ModelRouter(config);
 const docReader = new DocumentationReader(config);
+
+// Python AI Bridge (optional advanced AI features)
+let pythonBridge = null;
+if (config.pythonAI && config.pythonAI.enabled) {
+  pythonBridge = createPythonBridge(config.pythonAI);
+  pythonBridge.initialize().catch(err => {
+    console.error('Failed to initialize Python AI bridge:', err);
+  });
+}
 
 // Agent orchestrator
 const memory = new MemoryStore();

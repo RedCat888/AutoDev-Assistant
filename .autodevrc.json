@@ -43,6 +43,24 @@
   "plugins": {
     "enable": true,
     "paths": ["plugins"]
+  },
+  "pythonAI": {
+    "enabled": false,
+    "pythonPath": "python3",
+    "models": {
+      "claude": {
+        "enabled": true,
+        "apiKey": "${ANTHROPIC_API_KEY}"
+      },
+      "gemini": {
+        "enabled": false,
+        "apiKey": "${GOOGLE_API_KEY}"
+      },
+      "localLLM": {
+        "enabled": false,
+        "endpoint": "http://localhost:11434"
+      }
+    }
   }
 }
 
