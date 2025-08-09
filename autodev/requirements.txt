@@ -1,0 +1,36 @@
+# Core AI Models
+openai>=1.12.0
+anthropic>=0.18.0
+ollama>=0.1.7
+
+# Screen Capture & OCR
+pytesseract>=0.3.10
+pillow>=10.2.0
+pyautogui>=0.9.54
+opencv-python>=4.9.0
+numpy>=1.24.0
+
+# System Control & Automation
+pygetwindow>=0.0.9
+pynput>=1.7.6
+psutil>=5.9.0
+
+# Database & Memory
+sqlite-utils>=3.35
+sqlalchemy>=2.0.0
+
+# API & Networking
+requests>=2.31.0
+aiohttp>=3.9.0
+websockets>=12.0
+
+# Configuration & Utils
+python-dotenv>=1.0.0
+rich>=13.7.0  # For better console output
+tenacity>=8.2.0  # For retry logic
+
+# Development Tools
+black>=23.0.0
+pylint>=3.0.0
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
