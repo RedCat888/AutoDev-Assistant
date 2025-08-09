@@ -1,10 +1,13 @@
-# 🤖 AutoDev Assistant v2.0 - Enterprise Edition
+# 🤖 AutoDev Assistant v2.0 - Merged Edition
 
-[![Version](https://img.shields.io/badge/version-2.0.0--enhanced-blue)](https://github.com/autodev-assistant)
+[![Version](https://img.shields.io/badge/version-2.0.0--merged-blue)](https://github.com/autodev-assistant)
 [![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-green)](https://nodejs.org)
+[![Python](https://img.shields.io/badge/python-%3E%3D3.8-blue)](https://python.org)
 [![License](https://img.shields.io/badge/license-MIT-purple)](LICENSE)
 
-> An enterprise-grade autonomous AI coding assistant that observes your screen, understands documentation, intelligently routes to optimal AI models, maintains per-task context, and can run for extended periods without memory issues.
+> An enterprise-grade autonomous AI coding assistant combining JavaScript and Python capabilities. Features screen observation, multi-model AI routing, documentation understanding, per-task context, and optimized long-runtime operation.
+
+**📚 [See MERGED_ARCHITECTURE.md for detailed technical documentation](MERGED_ARCHITECTURE.md)**
 
 ## 🌟 Key Features
 
@@ -29,23 +32,39 @@
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js 18+ 
-- Windows 10/11 (for full PC control)
+- Node.js 18+ (required)
+- Python 3.8+ (optional, for advanced AI features)
+- Windows 10/11, macOS, or Linux
 - OpenAI API key (GPT-4o access)
 - 4GB+ RAM recommended
 
 ### Installation
+
+#### Core JavaScript Backend (Required)
 ```bash
 # Clone the repository
 git clone https://github.com/your-repo/autodev-assistant.git
 cd autodev-assistant
 
-# Install dependencies
+# Install Node.js dependencies
 npm install
 
 # Create environment file
 cp .env.example .env
 # Add your OPENAI_API_KEY to .env
+```
+
+#### Python AI Module (Optional - Advanced Features)
+```bash
+# Create Python virtual environment
+python3 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install Python dependencies
+pip install -r python_ai/requirements.txt
+
+# Enable Python AI in configuration
+# Edit .autodevrc.json and set pythonAI.enabled = true
 ```
 
 ### Running the System
