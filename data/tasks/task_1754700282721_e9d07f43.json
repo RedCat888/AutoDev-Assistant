@@ -1,0 +1,35 @@
+{
+  "id": "task_1754700282721_e9d07f43",
+  "name": "Generate code",
+  "type": "general",
+  "status": "active",
+  "createdAt": 1754700282721,
+  "lastUpdated": 1754700283987,
+  "context": {},
+  "metadata": {},
+  "history": [
+    {
+      "timestamp": 1754700282724,
+      "type": "user_input",
+      "role": "user",
+      "content": "Generate code",
+      "metadata": {}
+    },
+    {
+      "timestamp": 1754700283987,
+      "type": "ai_response",
+      "role": "assistant",
+      "content": "Sure! Can you please specify what kind of code you need? For example, are you looking for a specific programming language, a particular functionality (like a web application, a script, or an algorithm), or any other requirements?",
+      "metadata": {},
+      "modelUsed": "gpt-4o-mini"
+    }
+  ],
+  "memories": [],
+  "actions": [],
+  "learnings": [],
+  "modelPreferences": {
+    "primary": "gpt-4-turbo-preview",
+    "fallback": "claude-3-opus",
+    "reasoning": "Complex coding needs advanced reasoning"
+  }
+}

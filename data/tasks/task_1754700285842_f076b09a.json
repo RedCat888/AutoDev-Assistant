@@ -1,0 +1,35 @@
+{
+  "id": "task_1754700285842_f076b09a",
+  "name": "Fix errors",
+  "type": "general",
+  "status": "active",
+  "createdAt": 1754700285842,
+  "lastUpdated": 1754700286918,
+  "context": {},
+  "metadata": {},
+  "history": [
+    {
+      "timestamp": 1754700285845,
+      "type": "user_input",
+      "role": "user",
+      "content": "Fix errors",
+      "metadata": {}
+    },
+    {
+      "timestamp": 1754700286918,
+      "type": "ai_response",
+      "role": "assistant",
+      "content": "To assist you better, could you please provide more details about the errors you would like to fix? Are they related to a specific document, code, or another type of content?",
+      "metadata": {},
+      "modelUsed": "gpt-4o-mini"
+    }
+  ],
+  "memories": [],
+  "actions": [],
+  "learnings": [],
+  "modelPreferences": {
+    "primary": "gpt-4-turbo-preview",
+    "fallback": "claude-3-opus",
+    "reasoning": "Complex coding needs advanced reasoning"
+  }
+}

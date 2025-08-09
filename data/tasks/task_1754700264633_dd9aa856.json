@@ -1,0 +1,35 @@
+{
+  "id": "task_1754700264633_dd9aa856",
+  "name": "whats up",
+  "type": "general",
+  "status": "active",
+  "createdAt": 1754700264633,
+  "lastUpdated": 1754700265255,
+  "context": {},
+  "metadata": {},
+  "history": [
+    {
+      "timestamp": 1754700264640,
+      "type": "user_input",
+      "role": "user",
+      "content": "whats up",
+      "metadata": {}
+    },
+    {
+      "timestamp": 1754700265255,
+      "type": "ai_response",
+      "role": "assistant",
+      "content": "Not much! Just here to assist you. How can I help you today?",
+      "metadata": {},
+      "modelUsed": "gpt-4o-mini"
+    }
+  ],
+  "memories": [],
+  "actions": [],
+  "learnings": [],
+  "modelPreferences": {
+    "primary": "gpt-4-turbo-preview",
+    "fallback": "claude-3-opus",
+    "reasoning": "Complex coding needs advanced reasoning"
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "useLocalLLM": false,
+  "ollama": {
+    "baseUrl": "http://localhost:11434",
+    "model": "llama3.1:8b-instruct"
+  },
+  "openai": {
+    "model": "gpt-4o-mini"
+  },
+  "watch": {
+    "paths": [
+      "sample_workspace"
+    ],
+    "extensions": [".ts", ".js", ".py", ".tsx", ".jsx"],
+    "ignore": ["node_modules", ".git", "dist", "build"]
+  },
+  "trigger": {
+    "pattern": "TODO:",
+    "prefixes": ["// ", "# ", "/* "]
+  },
+  "server": {
+    "httpPort": 5178,
+    "wsPath": "/ws"
+  },
+  "ui": {
+    "accent": "#0ea5e9",
+    "position": "bottom-right"
+  },
+  "ocr": {
+    "enabled": false,
+    "lang": "eng"
+  },
+  "terminal": {
+    "watchPaths": ["logs/dev.log"],
+    "errorPatterns": ["error", "exception", "traceback", "ReferenceError", "TypeError"],
+    "maxReadBytes": 32768
+  },
+  "git": {
+    "enable": true,
+    "autoBranchPrefix": "autodev/",
+    "commitMessage": "AutoDev apply suggestion"
+  },
+  "plugins": {
+    "enable": true,
+    "paths": ["plugins"]
+  }
+}
+

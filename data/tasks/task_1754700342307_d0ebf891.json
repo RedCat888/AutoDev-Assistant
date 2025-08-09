@@ -1,0 +1,35 @@
+{
+  "id": "task_1754700342307_d0ebf891",
+  "name": "hi",
+  "type": "general",
+  "status": "active",
+  "createdAt": 1754700342307,
+  "lastUpdated": 1754700343342,
+  "context": {},
+  "metadata": {},
+  "history": [
+    {
+      "timestamp": 1754700342312,
+      "type": "user_input",
+      "role": "user",
+      "content": "hi",
+      "metadata": {}
+    },
+    {
+      "timestamp": 1754700343342,
+      "type": "ai_response",
+      "role": "assistant",
+      "content": "Hello! How can I assist you today?",
+      "metadata": {},
+      "modelUsed": "gpt-4o-mini"
+    }
+  ],
+  "memories": [],
+  "actions": [],
+  "learnings": [],
+  "modelPreferences": {
+    "primary": "gpt-4-turbo-preview",
+    "fallback": "claude-3-opus",
+    "reasoning": "Complex coding needs advanced reasoning"
+  }
+}

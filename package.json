@@ -1,0 +1,35 @@
+{
+  "name": "autodev-assistant",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon -q src/index.js",
+    "desktop": "electron ./desktop/main.js",
+    "backend": "node src/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "install": "npm install --no-save"
+  },
+  "keywords": ["ai", "automation", "developer", "assistant", "autonomous"],
+  "author": "AutoDev Team",
+  "license": "MIT",
+  "description": "Autonomous AI Developer Assistant - An AI agent that observes screens, plans actions, executes tasks, and learns from experience",
+  "dependencies": {
+    "axios": "^1.7.2",
+    "chokidar": "^4.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "screenshot-desktop": "^1.15.0",
+    "simple-git": "^3.25.0",
+    "tesseract.js": "^5.1.0",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "electron": "^31.3.0",
+    "nodemon": "^3.1.4"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

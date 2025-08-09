@@ -1,0 +1,532 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'unsafe-inline'; script-src 'unsafe-inline'" />
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      
+      body { 
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+        background: transparent;
+        color: #fff;
+        user-select: none;
+        overflow: hidden;
+      }
+      
+      /* Floating assistant widget - bottom right */
+      .assistant-widget {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        width: 400px;
+        max-height: 600px;
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        box-shadow: 
+          0 20px 40px rgba(0, 0, 0, 0.4),
+          0 0 80px rgba(14, 165, 233, 0.1),
+          inset 0 0 20px rgba(255, 255, 255, 0.05);
+        display: flex;
+        flex-direction: column;
+        animation: slideUp 0.3s ease-out;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      
+      @keyframes slideUp {
+        from { 
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      
+      /* Header with status */
+      .widget-header {
+        padding: 16px 20px;
+        background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+        border-radius: 16px 16px 0 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: move;
+      }
+      
+      .widget-title {
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      
+      .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #10b981;
+        box-shadow: 0 0 8px #10b981;
+        animation: pulse 2s infinite;
+      }
+      
+      .status-dot.disconnected {
+        background: #ef4444;
+        box-shadow: 0 0 8px #ef4444;
+        animation: none;
+      }
+      
+      @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+      }
+      
+      /* Chat/suggestion area */
+      .widget-content {
+        flex: 1;
+        padding: 16px;
+        overflow-y: auto;
+        max-height: 400px;
+      }
+      
+      .message {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 12px;
+        margin-bottom: 12px;
+        font-size: 13px;
+        line-height: 1.6;
+        animation: fadeIn 0.3s ease-out;
+      }
+      
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      
+      .message.ai {
+        background: linear-gradient(135deg, rgba(14, 165, 233, 0.1) 0%, rgba(14, 165, 233, 0.05) 100%);
+        border-color: rgba(14, 165, 233, 0.3);
+      }
+      
+      .message.system {
+        background: rgba(16, 185, 129, 0.1);
+        border-color: rgba(16, 185, 129, 0.3);
+        font-size: 12px;
+      }
+      
+      .message.error {
+        background: rgba(239, 68, 68, 0.1);
+        border-color: rgba(239, 68, 68, 0.3);
+      }
+      
+      .code-snippet {
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        padding: 8px;
+        margin: 8px 0;
+        font-family: 'SF Mono', 'Cascadia Code', monospace;
+        font-size: 12px;
+        overflow-x: auto;
+      }
+      
+      /* Input area */
+      .widget-input {
+        padding: 12px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        gap: 8px;
+      }
+      
+      .input-field {
+        flex: 1;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        padding: 8px 12px;
+        color: #fff;
+        font-size: 13px;
+        outline: none;
+        transition: all 0.2s;
+      }
+      
+      .input-field:focus {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: #0ea5e9;
+        box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.2);
+      }
+      
+      .input-field::placeholder {
+        color: rgba(255, 255, 255, 0.4);
+      }
+      
+      /* Quick action buttons */
+      .quick-actions {
+        padding: 0 12px 12px;
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      
+      .action-btn {
+        padding: 6px 12px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 12px;
+        cursor: pointer;
+        transition: all 0.2s;
+        white-space: nowrap;
+      }
+      
+      .action-btn:hover {
+        background: rgba(14, 165, 233, 0.2);
+        border-color: #0ea5e9;
+        color: #fff;
+        transform: translateY(-1px);
+      }
+      
+      .action-btn:active {
+        transform: translateY(0);
+      }
+      
+      .action-btn.primary {
+        background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+        border: none;
+        color: #fff;
+      }
+      
+      /* Minimize button */
+      .minimize-btn {
+        width: 24px;
+        height: 24px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      
+      .minimize-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: scale(1.1);
+      }
+      
+      /* Minimized state */
+      .assistant-widget.minimized {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        overflow: hidden;
+      }
+      
+      .assistant-widget.minimized .widget-header {
+        padding: 0;
+        height: 60px;
+        border-radius: 50%;
+        justify-content: center;
+      }
+      
+      .assistant-widget.minimized .widget-content,
+      .assistant-widget.minimized .widget-input,
+      .assistant-widget.minimized .quick-actions,
+      .assistant-widget.minimized .widget-title,
+      .assistant-widget.minimized .minimize-btn {
+        display: none;
+      }
+      
+      /* Loading animation */
+      .typing-indicator {
+        display: flex;
+        gap: 4px;
+        padding: 8px;
+      }
+      
+      .typing-dot {
+        width: 8px;
+        height: 8px;
+        background: #0ea5e9;
+        border-radius: 50%;
+        animation: typing 1.4s infinite;
+      }
+      
+      .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+      .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+      
+      @keyframes typing {
+        0%, 60%, 100% { opacity: 0.3; transform: scale(0.8); }
+        30% { opacity: 1; transform: scale(1); }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="assistant-widget" id="widget">
+      <div class="widget-header" id="header">
+        <div class="widget-title">
+          <span class="status-dot" id="status"></span>
+          <span>AutoDev AI</span>
+        </div>
+        <div class="minimize-btn" id="minimizeBtn">−</div>
+      </div>
+      
+      <div class="widget-content" id="content">
+        <div class="message system">
+          👋 Hi! I'm your AI coding assistant. I can see your screen, write code, and control applications.
+        </div>
+      </div>
+      
+      <div class="quick-actions">
+        <button class="action-btn" id="captureBtn">📸 Capture</button>
+        <button class="action-btn" id="analyzeBtn">👁️ Analyze</button>
+        <button class="action-btn primary" id="codeBtn">💻 Code</button>
+        <button class="action-btn" id="fixBtn">🔧 Fix Error</button>
+        <button class="action-btn" id="explainBtn">💡 Explain</button>
+      </div>
+      
+      <div class="widget-input">
+        <input type="text" class="input-field" id="inputField" placeholder="Ask me anything..." />
+      </div>
+    </div>
+    
+    <script>
+      const widget = document.getElementById('widget');
+      const header = document.getElementById('header');
+      const content = document.getElementById('content');
+      const statusDot = document.getElementById('status');
+      const inputField = document.getElementById('inputField');
+      const minimizeBtn = document.getElementById('minimizeBtn');
+      
+      let isDragging = false;
+      let currentX;
+      let currentY;
+      let initialX;
+      let initialY;
+      let xOffset = 0;
+      let yOffset = 0;
+      
+      // Make widget draggable
+      header.addEventListener('mousedown', dragStart);
+      document.addEventListener('mousemove', drag);
+      document.addEventListener('mouseup', dragEnd);
+      
+      function dragStart(e) {
+        if (e.target === minimizeBtn) return;
+        initialX = e.clientX - xOffset;
+        initialY = e.clientY - yOffset;
+        if (e.target === header || e.target.parentNode === header) {
+          isDragging = true;
+        }
+      }
+      
+      function drag(e) {
+        if (isDragging) {
+          e.preventDefault();
+          currentX = e.clientX - initialX;
+          currentY = e.clientY - initialY;
+          xOffset = currentX;
+          yOffset = currentY;
+          widget.style.transform = `translate(${currentX}px, ${currentY}px)`;
+        }
+      }
+      
+      function dragEnd(e) {
+        initialX = currentX;
+        initialY = currentY;
+        isDragging = false;
+      }
+      
+      // Minimize/expand
+      minimizeBtn.onclick = () => {
+        widget.classList.toggle('minimized');
+      };
+      
+      widget.addEventListener('click', (e) => {
+        if (widget.classList.contains('minimized') && e.target !== minimizeBtn) {
+          widget.classList.remove('minimized');
+        }
+      });
+      
+      // Add message to chat
+      function addMessage(text, type = 'ai') {
+        const msg = document.createElement('div');
+        msg.className = `message ${type}`;
+        msg.innerHTML = text;
+        content.appendChild(msg);
+        content.scrollTop = content.scrollHeight;
+      }
+      
+      function showTyping() {
+        const typing = document.createElement('div');
+        typing.className = 'typing-indicator';
+        typing.id = 'typing';
+        typing.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
+        content.appendChild(typing);
+        content.scrollTop = content.scrollHeight;
+      }
+      
+      function hideTyping() {
+        const typing = document.getElementById('typing');
+        if (typing) typing.remove();
+      }
+      
+      // WebSocket connection
+      window.autodev.onStatus((m) => {
+        statusDot.className = m.connected ? 'status-dot' : 'status-dot disconnected';
+      });
+      
+      window.autodev.onWs((m) => {
+        if (m.type === 'suggestion') {
+          hideTyping();
+          const code = m.suggestion ? `<div class="code-snippet">${m.suggestion}</div>` : '';
+          addMessage(`💡 Suggestion for ${m.filePath || 'your code'}:${code}`, 'ai');
+        }
+        
+        if (m.type === 'autopilot:step') {
+          addMessage(`⚡ ${m.action}`, 'system');
+        }
+        
+        if (m.type === 'step:done') {
+          addMessage(`✅ ${m.step?.title || 'Step completed'}`, 'system');
+        }
+        
+        if (m.type === 'step:error') {
+          addMessage(`❌ Error: ${m.error}`, 'error');
+        }
+      });
+      
+      // Input handling
+      inputField.addEventListener('keypress', async (e) => {
+        if (e.key === 'Enter' && inputField.value.trim()) {
+          const text = inputField.value.trim();
+          inputField.value = '';
+          
+          addMessage(text, 'user');
+          showTyping();
+          
+          try {
+            const res = await window.autodev.suggest({ prompt: text });
+            hideTyping();
+            if (res.suggestion) {
+              addMessage(`<div class="code-snippet">${res.suggestion}</div>`, 'ai');
+            }
+          } catch (err) {
+            hideTyping();
+            addMessage('Failed to get response', 'error');
+          }
+        }
+      });
+      
+      // Quick actions
+      document.getElementById('captureBtn').onclick = async () => {
+        showTyping();
+        try {
+          const res = await fetch('http://localhost:5178/api/vision/capture', { method: 'POST' });
+          const data = await res.json();
+          hideTyping();
+          addMessage('📸 Screen captured successfully', 'system');
+        } catch {
+          hideTyping();
+          addMessage('Failed to capture screen', 'error');
+        }
+      };
+      
+      document.getElementById('analyzeBtn').onclick = async () => {
+        showTyping();
+        try {
+          // First capture
+          const captureRes = await fetch('http://localhost:5178/api/vision/capture', { method: 'POST' });
+          const { imagePath } = await captureRes.json();
+          
+          // Then analyze
+          const res = await fetch('http://localhost:5178/api/vision/analyze', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+              imagePath,
+              prompt: 'What do you see on the screen? Focus on any code, development tools, or applications.'
+            })
+          });
+          const data = await res.json();
+          hideTyping();
+          if (data.analysis) {
+            addMessage(`👁️ Screen Analysis:\n${data.analysis}`, 'ai');
+          }
+        } catch {
+          hideTyping();
+          addMessage('Failed to analyze screen', 'error');
+        }
+      };
+      
+      document.getElementById('codeBtn').onclick = async () => {
+        const request = prompt('What would you like me to code?');
+        if (!request) return;
+        
+        addMessage(`💻 Coding: ${request}`, 'system');
+        showTyping();
+        
+        try {
+          const res = await fetch('http://localhost:5178/api/autopilot/plan', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ request })
+          });
+          const data = await res.json();
+          hideTyping();
+          if (data.success) {
+            addMessage('✅ Coding task completed!', 'system');
+            data.steps?.forEach(step => {
+              if (step.result) addMessage(`• ${step.action}: ${step.result}`, 'system');
+            });
+          } else {
+            addMessage(`Failed: ${data.error}`, 'error');
+          }
+        } catch {
+          hideTyping();
+          addMessage('Failed to execute coding task', 'error');
+        }
+      };
+      
+      document.getElementById('fixBtn').onclick = async () => {
+        addMessage('🔧 Looking for errors to fix...', 'system');
+        showTyping();
+        
+        try {
+          const res = await window.autodev.suggest({ 
+            prompt: 'Look at the current screen and fix any visible errors or issues in the code' 
+          });
+          hideTyping();
+        } catch {
+          hideTyping();
+          addMessage('No errors found or unable to analyze', 'error');
+        }
+      };
+      
+      document.getElementById('explainBtn').onclick = async () => {
+        addMessage('💡 Analyzing code for explanation...', 'system');
+        showTyping();
+        
+        try {
+          const res = await window.autodev.suggest({ 
+            prompt: 'Explain the code or application currently visible on screen' 
+          });
+          hideTyping();
+        } catch {
+          hideTyping();
+          addMessage('Unable to explain', 'error');
+        }
+      };
+    </script>
+  </body>
+</html>
